@@ -4,6 +4,7 @@ import SwiftUI
 
 struct PopoverContentView: View {
     @ObservedObject var dataProvider: UsageDataProvider
+    @ObservedObject var appSettings: AppSettings
 
     var body: some View {
         let snap = dataProvider.snapshot
@@ -70,13 +71,71 @@ struct PopoverContentView: View {
                 .padding(.vertical, 10)
                 .background(RoundedRectangle(cornerRadius: 10).fill(.secondary.opacity(0.08)))
                 .padding(.horizontal, 12)
-                .padding(.bottom, 14)
+                .padding(.bottom, 12)
             }
+
+            Divider().padding(.horizontal, 12)
+
+            // Footer: actions & settings
+            HStack(spacing: 6) {
+                Button(action: { dataProvider.refresh() }) {
+                    Label("Refresh", systemImage: "arrow.clockwise")
+                        .font(.system(size: 11))
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(.secondary)
+
+                Spacer()
+
+                Menu {
+                    Toggle("Launch at Login", isOn: $appSettings.launchAtLogin)
+
+                    Menu("Refresh Interval") {
+                        ForEach([30, 60, 120, 300], id: \.self) { sec in
+                            Button {
+                                appSettings.refreshInterval = Double(sec)
+                            } label: {
+                                HStack {
+                                    Text(intervalLabel(sec))
+                                    if Int(appSettings.refreshInterval) == sec {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+                .menuStyle(.borderlessButton)
+                .fixedSize()
+
+                Button(action: { NSApplication.shared.terminate(nil) }) {
+                    Label("Quit", systemImage: "power")
+                        .font(.system(size: 11))
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 10)
         }
     }
 
     private var dividerLine: some View {
         Rectangle().fill(.secondary.opacity(0.15)).frame(width: 1, height: 28)
+    }
+
+    private func intervalLabel(_ seconds: Int) -> String {
+        switch seconds {
+        case 30: return "30 seconds"
+        case 60: return "1 minute"
+        case 120: return "2 minutes"
+        case 300: return "5 minutes"
+        default: return "\(seconds)s"
+        }
     }
 }
 
@@ -120,53 +179,7 @@ struct UsageBar: View {
     }
 }
 
-// MARK: - Mini Components
-
-struct MiniSparkline: View {
-    let data: [Int]
-    var body: some View {
-        GeometryReader { geo in
-            let maxVal = max(CGFloat(data.max() ?? 1), 1)
-            let step = geo.size.width / CGFloat(max(data.count - 1, 1))
-            let points = data.enumerated().map { (i, val) in
-                CGPoint(x: CGFloat(i) * step,
-                        y: geo.size.height * (1 - CGFloat(val) / maxVal))
-            }
-
-            Path { path in
-                guard points.count > 1 else { return }
-                path.move(to: points[0])
-                for i in 1..<points.count {
-                    let cp1 = CGPoint(x: (points[i-1].x + points[i].x) / 2, y: points[i-1].y)
-                    let cp2 = CGPoint(x: (points[i-1].x + points[i].x) / 2, y: points[i].y)
-                    path.addCurve(to: points[i], control1: cp1, control2: cp2)
-                }
-            }
-            .stroke(
-                LinearGradient(colors: [.blue.opacity(0.6), .purple.opacity(0.8)],
-                               startPoint: .leading, endPoint: .trailing),
-                style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)
-            )
-
-            Path { path in
-                guard points.count > 1 else { return }
-                path.move(to: CGPoint(x: 0, y: geo.size.height))
-                path.addLine(to: points[0])
-                for i in 1..<points.count {
-                    let cp1 = CGPoint(x: (points[i-1].x + points[i].x) / 2, y: points[i-1].y)
-                    let cp2 = CGPoint(x: (points[i-1].x + points[i].x) / 2, y: points[i].y)
-                    path.addCurve(to: points[i], control1: cp1, control2: cp2)
-                }
-                path.addLine(to: CGPoint(x: points.last!.x, y: geo.size.height))
-                path.closeSubpath()
-            }
-            .fill(
-                LinearGradient(colors: [.blue.opacity(0.12), .purple.opacity(0.03)],
-                               startPoint: .top, endPoint: .bottom)
-            )
-        }
-    }
-}
+// MARK: - Stat Column
 
 struct StatColumn: View {
     let value: String

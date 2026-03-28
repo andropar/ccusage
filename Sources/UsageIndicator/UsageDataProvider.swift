@@ -93,14 +93,25 @@ class UsageDataProvider: ObservableObject {
     private var timer: Timer?
     private let statsPath: String
     private var accessToken: String?
+    private var settingsCancellable: AnyCancellable?
 
-    init() {
+    init(settings: AppSettings) {
         let home = FileManager.default.homeDirectoryForCurrentUser.path
         self.statsPath = "\(home)/.claude/stats-cache.json"
         loadCredentials()
         refresh()
-        // Refresh every 60 seconds
-        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+        scheduleTimer(interval: settings.refreshInterval)
+
+        settingsCancellable = settings.$refreshInterval
+            .dropFirst()
+            .sink { [weak self] interval in
+                self?.scheduleTimer(interval: interval)
+            }
+    }
+
+    private func scheduleTimer(interval: TimeInterval) {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             self?.refresh()
         }
     }

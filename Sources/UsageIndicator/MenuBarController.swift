@@ -8,14 +8,15 @@ class MenuBarController {
     private let dataProvider: UsageDataProvider
     private var cancellable: AnyCancellable?
 
-    init(dataProvider: UsageDataProvider) {
+    init(dataProvider: UsageDataProvider, settings: AppSettings) {
         self.dataProvider = dataProvider
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         self.popover = NSPopover()
 
         popover.behavior = .transient
         popover.contentViewController = NSHostingController(
-            rootView: PopoverContentView(dataProvider: dataProvider).frame(width: 300)
+            rootView: PopoverContentView(dataProvider: dataProvider, appSettings: settings)
+                .frame(width: 300)
         )
 
         if let button = statusItem.button {

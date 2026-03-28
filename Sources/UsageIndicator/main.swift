@@ -2,10 +2,11 @@ import AppKit
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var menuBarController: MenuBarController?
-    let dataProvider = UsageDataProvider()
+    let settings = AppSettings()
+    lazy var dataProvider = UsageDataProvider(settings: settings)
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        menuBarController = MenuBarController(dataProvider: dataProvider)
+        menuBarController = MenuBarController(dataProvider: dataProvider, settings: settings)
     }
 }
 
