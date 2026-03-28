@@ -13,7 +13,6 @@ A lightweight macOS menu bar app that shows your Claude Code API usage at a glan
   - Reset timers for each bucket
   - Today's message & session count
   - All-time message count
-  - 14-day activity sparkline
 - Auto-refreshes every 60 seconds
 - No dock icon, runs quietly in the background
 
