@@ -1,5 +1,4 @@
 .build/
-UsageIndicator.app/
 .swiftpm/
 *.zip
 .DS_Store
