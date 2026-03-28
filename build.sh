@@ -1,17 +1,15 @@
 #!/bin/bash
 set -e
 
-echo "Building UsageIndicator..."
+echo "Building ccusage..."
 swift build -c release
 
 echo "Creating app bundle..."
-mkdir -p UsageIndicator.app/Contents/MacOS
-mkdir -p UsageIndicator.app/Contents/Resources
-cp .build/release/UsageIndicator UsageIndicator.app/Contents/MacOS/
-cp Sources/UsageIndicator/Info.plist UsageIndicator.app/Contents/
-
-echo "Creating zip for sharing..."
-zip -r UsageIndicator.zip UsageIndicator.app
+mkdir -p ccusage.app/Contents/MacOS
+mkdir -p ccusage.app/Contents/Resources
+cp .build/release/UsageIndicator ccusage.app/Contents/MacOS/ccusage
+cp Sources/UsageIndicator/Info.plist ccusage.app/Contents/
+cp ccusage.icns ccusage.app/Contents/Resources/
 
 echo ""
-echo "Done! Share UsageIndicator.zip or copy UsageIndicator.app to /Applications"
+echo "Done! Copy ccusage.app to /Applications to use it."

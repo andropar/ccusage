@@ -3,9 +3,11 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>UsageIndicator</string>
+    <string>ccusage</string>
     <key>CFBundleIdentifier</key>
-    <string>com.johannes.usageindicator</string>
+    <string>com.johannes.ccusage</string>
+    <key>CFBundleIconFile</key>
+    <string>ccusage</string>
     <key>CFBundleVersion</key>
     <string>1.0</string>
     <key>CFBundleShortVersionString</key>
