@@ -60,18 +60,11 @@ struct PopoverContentView: View {
 
                 // Bottom stats
                 HStack(spacing: 0) {
-                    StatColumn(value: "\(snap.todayMessages)", label: "Today")
+                    StatColumn(value: "\(snap.todayMessages)", label: "Msgs today")
                     dividerLine
-                    StatColumn(value: "\(snap.todaySessions)", label: "Sessions")
+                    StatColumn(value: "\(snap.todaySessions)", label: "Sessions today")
                     dividerLine
-                    StatColumn(value: formatNumber(snap.totalMessages), label: "All time")
-                    if !snap.dailyActivity.isEmpty {
-                        dividerLine
-                        MiniSparkline(data: snap.dailyActivity.map(\.messages))
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 28)
-                            .padding(.horizontal, 8)
-                    }
+                    StatColumn(value: formatNumber(snap.totalMessages), label: "Msgs all time")
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
