@@ -41,6 +41,17 @@ This creates `ccusage.app` in the repo root. Move it to `/Applications` or run i
 
 The app reads your Claude Code OAuth token from the macOS Keychain and queries the [Anthropic usage API](https://api.anthropic.com/api/oauth/usage) for rate limit data. Local stats (today's messages, session count, all-time totals) are parsed from `~/.claude/` session files and stats cache.
 
+## Security & privacy
+
+This app reads your Claude Code OAuth token from the macOS Keychain — so it's fair to ask whether it's safe to use.
+
+- **The code is fully open source** — you can audit every line
+- **Release binaries are built by GitHub Actions**, not on a developer's machine. The [workflow](.github/workflows/release.yml) runs `./build.sh` on GitHub's macOS runners, so you can verify the binary matches the source
+- **The token is only sent to `api.anthropic.com`** — the app makes no other network requests
+- **No data leaves your machine** — local stats are read from `~/.claude/` and stay local
+
+If you want maximum confidence, [build from source](#option-2-build-from-source).
+
 ## Usage colors
 
 | Color | Usage |

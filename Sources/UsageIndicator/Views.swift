@@ -42,6 +42,12 @@ struct PopoverContentView: View {
                 ProgressView().scaleEffect(0.7)
                 Spacer()
                     .frame(height: 80)
+            } else if let error = dataProvider.error {
+                Text(error)
+                    .font(.system(size: 11))
+                    .foregroundColor(.red)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 8)
             } else {
                 VStack(spacing: 12) {
                     UsageBar(label: "Current session", pct: snap.fiveHourPct,

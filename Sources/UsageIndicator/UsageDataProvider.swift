@@ -147,6 +147,7 @@ class UsageDataProvider: ObservableObject {
     }
 
     func refresh() {
+        loadCredentials()
         loadLocalStats()
         fetchAPIUsage()
     }
@@ -244,13 +245,33 @@ class UsageDataProvider: ObservableObject {
         request.setValue("oauth-2025-04-20", forHTTPHeaderField: "anthropic-beta")
 
         URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-            guard let self = self, let data = data else {
-                DispatchQueue.main.async { self?.isLoading = false }
+            guard let self = self else { return }
+
+            if let error = error {
+                DispatchQueue.main.async {
+                    self.error = error.localizedDescription
+                    self.isLoading = false
+                }
+                return
+            }
+
+            guard let data = data else {
+                DispatchQueue.main.async { self.isLoading = false }
+                return
+            }
+
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                let body = String(data: data, encoding: .utf8) ?? ""
+                DispatchQueue.main.async {
+                    self.error = "API \(httpResponse.statusCode): \(body.prefix(200))"
+                    self.isLoading = false
+                }
                 return
             }
 
             if let usage = try? JSONDecoder().decode(UsageResponse.self, from: data) {
                 DispatchQueue.main.async {
+                    self.error = nil
                     self.snapshot.hasAPIData = true
                     if let fh = usage.five_hour {
                         self.snapshot.fiveHourPct = fh.utilization
@@ -271,7 +292,10 @@ class UsageDataProvider: ObservableObject {
                     self.isLoading = false
                 }
             } else {
-                DispatchQueue.main.async { self.isLoading = false }
+                DispatchQueue.main.async {
+                    self.error = "Failed to parse API response"
+                    self.isLoading = false
+                }
             }
         }.resume()
     }
