@@ -25,7 +25,7 @@ A lightweight macOS menu bar app that shows your Claude Code API usage at a glan
 
 ### Option 1: Download the app
 
-Grab `UsageIndicator.app` from the [latest release](https://github.com/andropar/ccusage/releases), drop it into `/Applications`, and open it. On first launch, right-click → Open to bypass Gatekeeper (the app is unsigned).
+Grab `ccusage.app.zip` from the [latest release](https://github.com/andropar/ccusage/releases), unzip it, drop `ccusage.app` into `/Applications`, and open it. On first launch, right-click → Open to bypass Gatekeeper (the app is unsigned).
 
 ### Option 2: Build from source
 
@@ -35,7 +35,7 @@ cd ccusage
 ./build.sh
 ```
 
-This creates `UsageIndicator.app` in the repo root. Move it to `/Applications` or run it directly.
+This creates `ccusage.app` in the repo root. Move it to `/Applications` or run it directly.
 
 ## How it works
 
